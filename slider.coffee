@@ -1,10 +1,31 @@
 Slider = React.createClass
   createTable: ->
-    for i in [-1000..1000]
-      this.state.table[i] = i
-
-#    for i in [0..this.state.height]
-#      this.state.table[i] = i
+    val = 0
+    for i in [0..40]
+      this.state.table[i] = val
+      val += 1
+    for i in [41..80]
+      this.state.table[i] = val
+      val += 10
+    for i in [81..120]
+      this.state.table[i] = val
+      val += 100
+    for i in [121..160]
+      this.state.table[i] = val
+      val += 1000
+    val = 0
+    for i in [0..40]
+      this.state.table[-i] = val
+      val -= 1
+    for i in [41..80]
+      this.state.table[-i] = val
+      val -= 10
+    for i in [81..120]
+      this.state.table[-i] = val
+      val -= 100
+    for i in [121..160]
+      this.state.table[-i] = val
+      val -= 1000
 
   getInitialState: ->
     state = 
@@ -43,7 +64,7 @@ Slider = React.createClass
       #
       # ここで微調整計算
       #
-      value = this.state.downvalue + this.state.table[yoffset] # * 11                                  # 新しい値設定
+      value = this.state.downvalue + this.state.table[yoffset]                # 新しい値設定
       value = 0 if value < 0
       value = this.state.maxvalue if value > this.state.maxvalue
       this.props.onChange value                                               # 新しい値を親に通知
