@@ -1,10 +1,12 @@
 Slider = React.createClass
   getInitialState: ->
     state = 
-      top: this.props.top         # 親から渡された値
+      top: this.props.top               # 親から渡された値
       left: this.props.left
-      height: 400                 # スライダの長さ
-      value: 200                  # ノブの値
+      height: this.props.height         # スライダの長さ
+      knobpos: this.props.height / 2
+      maxvalue: this.props.maxvalue
+      value: this.props.maxvalue / 2
       clicked: false
 
   onMouseDown: (e) ->
@@ -12,10 +14,10 @@ Slider = React.createClass
     this.state.mousedowny = e.pageY
     this.state.mousedownx = e.pageX
     this.state.downvalue = this.state.value
+    this.state.downknobpos = this.state.knobpos
     this.state.clicked = true
     $(document).bind 'mousemove', this.onMouseMove
     $(document).bind 'mouseup', this.onMouseUp
-    return
 
   onMouseUp: (e) ->
     e.preventDefault()
@@ -27,9 +29,10 @@ Slider = React.createClass
   onMouseMove: (e) ->
     e.preventDefault()
     if this.state.clicked
-      value = this.state.downvalue - e.pageY + this.state.mousedowny
+      knobpos = this.state.downknobpos - e.pageY + this.state.mousedowny
+      value = knobpos # ここに微調整を入れる
       value = 0 if value < 0
-      value = 400 if value > 400
+      value = this.state.maxvalue if value > this.state.maxvalue
       this.props.onChange value  # 親に通知... こうやるものだっけ?
       this.setState
         value: value
@@ -38,10 +41,10 @@ Slider = React.createClass
     sliderstyle =
       backgroundColor: "#ff0"
       position: 'absolute'
-      top: -100 + this.state.height - this.state.value
+      top: 300 - this.state.value # ノブ位置が300のとき
       left: this.state.left
       width: 20
-      height: 400
+      height: this.props.height
     knob =
       position: 'absolute'
       width: 80
@@ -52,5 +55,6 @@ Slider = React.createClass
 
     <div style={sliderstyle} onMouseDown={this.onMouseDown}>
       <div style={knob}>
+        {this.state.value}
       </div>
     </div>
