@@ -1,5 +1,6 @@
 slider:
 	cjsx -cb pivotty.coffee
+	cjsx -cb slider.coffee
 data:
 	wget http://pivotty.nikezono.net/data
 	mv data /tmp/tmpdata
