@@ -8,7 +8,6 @@ Slider = React.createClass
       height: 400                 # スライダの長さ
       value: 200                  # ノブの値
       clicked: false
-      onChange: this.props.onChange
 
   onMouseDown: (e) ->
     e.preventDefault()
@@ -33,7 +32,7 @@ Slider = React.createClass
       value = this.state.downvalue - e.pageY + this.state.mousedowny
       value = 0 if value < 0
       value = 400 if value > 400
-      this.state.onChange value  # 親に通知... こうやるものだっけ?
+      this.props.onChange value  # 親に通知... こうやるものだっけ?
       this.setState
         value: value
 
@@ -61,13 +60,24 @@ Slider = React.createClass
 MovieInfo = React.createClass
   render: ->
     url = movieData['data'][this.props.id]['image_url']
-    style =
-      position: 'absolute'
-      top: this.props.top
-      left: this.props.left
-      height: 300
+    title = movieData['data'][this.props.id]['Title']
+    # $('#span1').text title
 
-    <img style={style} src={url} />
+    imagestyle =
+      position: 'absolute'
+      top: this.props.top + 140
+      left: this.props.left + 20
+      height: 300
+    titlestyle =
+      position: 'absolute'
+      top: this.props.top + 20
+      left: this.props.left + 20
+      width: 200
+
+    <div>
+      <div style={titlestyle} >{title}</div>
+      <img style={imagestyle} src={url} />
+    </div>
 
 PivottyApp = React.createClass
   getInitialState: ->
@@ -88,7 +98,7 @@ PivottyApp = React.createClass
       <Slider top=70 left=280 onChange={this.changeTitle} />
       <Slider top=70 left=380 onChange={this.changeRank} />
 
-      <MovieInfo top=140 left=30 id={this.state.id} />
+      <MovieInfo top=0 left=0 id={this.state.id} />
     </div>
 
 data_received = (d, status, xhr) ->
@@ -99,38 +109,10 @@ $ ->
   $.ajax
     async:     true
     type:      "GET"
-    url:       "movies.json"
+    url:       "movies.json" # データはhttp://pivotty.nikezono.net/data から
     dataType:  "json"
     context:    this
     success:   data_received
     error:     (xhr,  status, error) -> alert status
     # complete:  data_received
     
-# データはhttp://pivotty.nikezono.net/data
-# {
-#   "data": [
-#     {
-#       "Title": "Jumanji",
-#       "Year": "1995",
-#       "Rated": "PG",
-#       "Released": "15 Dec 1995",
-#       "Runtime": "104 min",
-#       "Genre": "Adventure, Family, Fantasy",
-#       "Director": "Joe Johnston",
-#       "Writer": "Jonathan Hensleigh (screenplay),...",
-#       "Actors": "Robin Williams, Jonathan Hyde, Kirsten Dunst, Bradley Pierce",
-#       "Plot": "When two kids find and play a magical board game, ...",
-#       "Language": "English, French",
-#       "Country": "USA",
-#       "Awards": "4 wins & 9 nominations.",
-#       "image_url": "http://ia.media-imdb.com/images/M/MV5BMTk5MjAyNTM4Ml5BMl5BanBnXkFtZTgwMjY0MDI0MjE@._V1_SX300.jpg",
-#       "Metascore": "39",
-#       "imdbRating": "6.9",
-#       "imdbVotes": "190,920",
-#       "imdbID": "tt0113497",
-#       "Type": "movie",
-#       "Response": "True",
-#       "id": "1"
-#     },
-#     ...
-
