@@ -33,7 +33,7 @@ Slider = React.createClass
       value = this.state.downvalue - e.pageY + this.state.mousedowny
       value = 0 if value < 0
       value = 400 if value > 400
-      this.state.onChange value
+      this.state.onChange value  # 親に通知... こうやるものだっけ?
       this.setState
         value: value
 
@@ -49,7 +49,7 @@ Slider = React.createClass
       position: 'absolute'
       width: 80
       height:20
-      left: -40
+      left: -30
       top: this.state.value
       backgroundColor: "#ccf8"
 
@@ -85,10 +85,10 @@ PivottyApp = React.createClass
 
   render: ->
     <div>
-      <Slider top=100 left=100 onChange={this.changeTitle} />
-      <Slider top=100 left=200 onChange={this.changeRank} />
+      <Slider top=70 left=280 onChange={this.changeTitle} />
+      <Slider top=70 left=380 onChange={this.changeRank} />
 
-      <MovieInfo top=400 left=400 id={this.state.id} />
+      <MovieInfo top=140 left=30 id={this.state.id} />
     </div>
 
 data_received = (d, status, xhr) ->
