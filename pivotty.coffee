@@ -1,4 +1,4 @@
-data = {}
+movieData = {}
 
 Slider = React.createClass
   getInitialState: ->
@@ -11,7 +11,6 @@ Slider = React.createClass
       onChange: this.props.onChange
 
   onMouseDown: (e) ->
-    #$('#span2').text('DOWN')
     e.preventDefault()
     this.state.mousedowny = e.pageY
     this.state.mousedownx = e.pageX
@@ -24,7 +23,6 @@ Slider = React.createClass
   onMouseUp: (e) ->
     e.preventDefault()
     if this.state.clicked
-      #$('#span2').text('UP')
       this.state.clicked = false
       $(document).unbind 'mousemove', this.onMouseMove
       $(document).unbind 'mouseup', this.onMouseUp
@@ -32,18 +30,12 @@ Slider = React.createClass
   onMouseMove: (e) ->
     e.preventDefault()
     if this.state.clicked
-      # value = this.state.downvalue + e.pageY - this.state.mousedowny
       value = this.state.downvalue - e.pageY + this.state.mousedowny
       value = 0 if value < 0
       value = 400 if value > 400
-      i = data['indices']['imdbVotes'][value]
-      # $('#span1').text data['data'][i]['Title']
-      # $('#image').attr 'src', data['data'][i]['image_url']
       this.state.onChange value
       this.setState
         value: value
-        #mousex: e.pageX - this.state.mousedownx # マウス移動量
-        #mousey: e.pageY - this.state.mousedowny
 
   render: ->
     sliderstyle =
@@ -55,9 +47,9 @@ Slider = React.createClass
       height: 400
     knob =
       position: 'absolute'
-      width: 100
+      width: 80
       height:20
-      left: -50
+      left: -40
       top: this.state.value
       backgroundColor: "#ccf8"
 
@@ -68,8 +60,7 @@ Slider = React.createClass
 
 MovieInfo = React.createClass
   render: ->
-    i = data['indices']['imdbVotes'][this.props.rank]
-    url = data['data'][i]['image_url']
+    url = movieData['data'][this.props.id]['image_url']
     style =
       position: 'absolute'
       top: this.props.top
@@ -84,31 +75,32 @@ PivottyApp = React.createClass
     left: this.props.left
     rank: 0
     title: 0
-
-#    items: this.props.zzz
-#    #items: [1, 2, 3]   # this.state.items がセットされる
+    id: 0
 
   changeRank: (rank) ->
+    id = movieData['indices']['imdbVotes'][rank]
     this.setState
       rank: rank
+      id: id
+
+  changeTitle: (title) ->
+    id = movieData['indices']['Title'][title]
+    this.setState
+      title: title
+      id: id
 
   render: ->
     <div>
-      <Slider top=100 left=100 onChange={this.changeRank} />
+      <Slider top=100 left=100 onChange={this.changeTitle} />
       <Slider top=100 left=200 onChange={this.changeRank} />
 
-      <MovieInfo top=400 left=400 rank={this.state.rank} />
+      <MovieInfo top=400 left=400 id={this.state.id} />
     </div>
 
 data_received = (d, status, xhr) ->
-  data = d
+  movieData = d
   React.render <PivottyApp top=0 left=0 />, pivotty
 
-# i = data['indices']['imdbVotes'][0]
-# alert data['data'][i]['Title']
-# alert data['data'][0]['Title']
-
-# データはhttp://pivotty.nikezono.net/data
 $ ->
   $.ajax
     async:     true
@@ -120,12 +112,7 @@ $ ->
     error:     (xhr,  status, error) -> alert status
     # complete:  data_received
     
-#  React.render <PivottyApp top=0 left=0 />, pivotty
-  
-#  React.render <Slider top=100 left=100 />, sliderdiv1
-#  React.render <Slider top=100 left=200 />, sliderdiv2
-
-
+# データはhttp://pivotty.nikezono.net/data
 # {
 #   "data": [
 #     {
