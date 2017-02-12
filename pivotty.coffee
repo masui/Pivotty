@@ -71,22 +71,16 @@ MovieInfo = React.createClass
 
 PivottyApp = React.createClass
   getInitialState: ->
-    top: this.props.top
-    left: this.props.left
-    rank: 0
-    title: 0
     id: 0
-
+ 
   changeRank: (rank) ->
     id = movieData['indices']['imdbVotes'][rank]
     this.setState
-      rank: rank
       id: id
 
   changeTitle: (title) ->
     id = movieData['indices']['Title'][title]
     this.setState
-      title: title
       id: id
 
   render: ->
@@ -99,7 +93,7 @@ PivottyApp = React.createClass
 
 data_received = (d, status, xhr) ->
   movieData = d
-  React.render <PivottyApp top=0 left=0 />, pivotty
+  React.render <PivottyApp />, pivotty
 
 $ ->
   $.ajax
@@ -123,9 +117,9 @@ $ ->
 #       "Runtime": "104 min",
 #       "Genre": "Adventure, Family, Fantasy",
 #       "Director": "Joe Johnston",
-#       "Writer": "Jonathan Hensleigh (screenplay), Greg Taylor (screenplay), Jim Strain (screenplay), Greg Taylor (screen story), Jim Strain (screen story), Chris Van Allsburg (screen story), Chris Van Allsburg (book)",
+#       "Writer": "Jonathan Hensleigh (screenplay),...",
 #       "Actors": "Robin Williams, Jonathan Hyde, Kirsten Dunst, Bradley Pierce",
-#       "Plot": "When two kids find and play a magical board game, they release a man trapped for decades in it and a host of dangers that can only be stopped by finishing the game.",
+#       "Plot": "When two kids find and play a magical board game, ...",
 #       "Language": "English, French",
 #       "Country": "USA",
 #       "Awards": "4 wins & 9 nominations.",
