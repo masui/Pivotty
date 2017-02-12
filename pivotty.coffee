@@ -38,7 +38,7 @@ PivottyApp = React.createClass
   render: ->
     <div>
       <Slider top=70 left=280 height=400 maxvalue=400 onChange={this.changeTitle} />
-      <Slider top=70 left=380 height=400 maxvalue=400 onChange={this.changeRank} />
+      <Slider top=70 left=380 height=400 maxvalue=4000 onChange={this.changeRank} />
 
       <MovieInfo top=0 left=0 id={this.state.id} />
     </div>
