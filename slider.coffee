@@ -86,7 +86,7 @@ Slider = React.createClass
       left: this.state.left
       width: 20
       height: this.props.height
-    knob =
+    knobstyle =
       position: 'absolute'
       width: 80
       height:20
@@ -95,7 +95,7 @@ Slider = React.createClass
       backgroundColor: "#ccf8"
 
     <div style={sliderstyle} onMouseDown={this.onMouseDown}>
-      <div style={knob}>
+      <div style={knobstyle}>
         {value}
       </div>
     </div>
