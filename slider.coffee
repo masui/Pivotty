@@ -1,31 +1,37 @@
 Slider = React.createClass
   createTable: ->
-    val = 0
-    for i in [0..40]
-      this.state.table[i] = val
-      val += 1
+    val = 0.0
+    for i in [0..20]
+      this.state.table[i] = Math.floor val
+      val += 0.2
+    for i in [21..40]
+      this.state.table[i] = Math.floor val
+      val += 0.5
     for i in [41..80]
-      this.state.table[i] = val
-      val += 10
+      this.state.table[i] = Math.floor val
+      val += 5.0
     for i in [81..120]
-      this.state.table[i] = val
-      val += 100
+      this.state.table[i] = Math.floor val
+      val += 50.0
     for i in [121..160]
-      this.state.table[i] = val
-      val += 1000
-    val = 0
-    for i in [0..40]
-      this.state.table[-i] = val
-      val -= 1
+      this.state.table[i] = Math.floor val
+      val += 500.0
+    val = 0.0
+    for i in [0..20]
+      this.state.table[-i] = Math.floor val
+      val -= 0.2
+    for i in [21..40]
+      this.state.table[-i] = Math.floor val
+      val -= 0.5
     for i in [41..80]
-      this.state.table[-i] = val
-      val -= 10
+      this.state.table[-i] = Math.floor val
+      val -= 5.0
     for i in [81..120]
-      this.state.table[-i] = val
-      val -= 100
+      this.state.table[-i] = Math.floor val
+      val -= 50.0
     for i in [121..160]
-      this.state.table[-i] = val
-      val -= 1000
+      this.state.table[-i] = Math.floor val
+      val -= 500.0
 
   getInitialState: ->
     state = 
@@ -88,9 +94,9 @@ Slider = React.createClass
       height: this.props.height
     knobstyle =
       position: 'absolute'
-      width: 80
+      width: 120
       height:20
-      left: -30
+      left: 0
       top: knobpos                                                 # スライダ移動
       backgroundColor: "#ccf8"
 

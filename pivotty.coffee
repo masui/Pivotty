@@ -127,17 +127,43 @@ PivottyApp = React.createClass
 
   render: ->
     id = this.state.id
+    
+    titleValue = this.findValue movieData['indices']['Title'], id
+    id11 = movieData['indices']['Title'][titleValue-2]
+    id12 = movieData['indices']['Title'][titleValue-1]
+    id13 = movieData['indices']['Title'][titleValue+1]
+    id14 = movieData['indices']['Title'][titleValue+2]
+    
     rankValue = this.findValue movieData['indices']['imdbVotes'], id
-    id2 = movieData['indices']['imdbVotes'][rankValue-2]
-    id1 = movieData['indices']['imdbVotes'][rankValue-1]
+    id21 = movieData['indices']['imdbVotes'][rankValue-2]
+    id22 = movieData['indices']['imdbVotes'][rankValue-1]
+    id23 = movieData['indices']['imdbVotes'][rankValue+1]
+    id24 = movieData['indices']['imdbVotes'][rankValue+2]
+    
+    directorValue = this.findValue movieData['indices']['Director'], id
+    id31 = movieData['indices']['Director'][directorValue-2]
+    id32 = movieData['indices']['Director'][directorValue-1]
+    id33 = movieData['indices']['Director'][directorValue+1]
+    id34 = movieData['indices']['Director'][directorValue+2]
+    
     <div>
+      <MovieImage top=50  left=305 id={id11} />
+      <MovieImage top=170 left=305 id={id12} />
       <Slider top=70 left=280 height=400 maxvalue=30106 onChange={this.changeTitle} value={this.state.titleValue} />
+      <MovieImage top=330 left=305 id={id13} />
+      <MovieImage top=450 left=305 id={id14} />
 
-      <Slider top=70 left=380 height=400 maxvalue=30106 onChange={this.changeRank} value={this.state.rankValue} />
-      <MovieImage top=50 left=405 id={id2} />
-      <MovieImage top=170 left=405 id={id1} />
-
-      <Slider top=70 left=480 height=400 maxvalue=30106 onChange={this.changeDirector} value={this.state.directorValue} />
+      <MovieImage top=50  left=425 id={id21} />
+      <MovieImage top=170 left=425 id={id22} />
+      <Slider top=70 left=400 height=400 maxvalue=30106 onChange={this.changeRank} value={this.state.rankValue} />
+      <MovieImage top=330 left=425 id={id23} />
+      <MovieImage top=450 left=425 id={id24} />
+        
+      <MovieImage top=50  left=545 id={id31} />
+      <MovieImage top=170 left=545 id={id32} />
+      <Slider top=70 left=520 height=400 maxvalue=30106 onChange={this.changeDirector} value={this.state.directorValue} />
+      <MovieImage top=330 left=545 id={id33} />
+      <MovieImage top=450 left=545 id={id34} />
         
       <MovieInfo top=0 left=0 id={id} />
     </div>
