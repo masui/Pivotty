@@ -32,9 +32,9 @@ Slider = React.createClass
       top: this.props.top               # 親から渡された値
       left: this.props.left
       height: this.props.height         # スライダの長さ
-      knobpos: this.props.height / 2
+      #knobpos: this.props.height / 2
       maxvalue: this.props.maxvalue
-      value: this.props.maxvalue / 2
+      value: this.props.value
       clicked: false
       table: {}
 
@@ -67,16 +67,22 @@ Slider = React.createClass
       value = this.state.downvalue + this.state.table[yoffset]                # 新しい値設定
       value = 0 if value < 0
       value = this.state.maxvalue if value > this.state.maxvalue
+      this.props.value = value
       this.props.onChange value                                               # 新しい値を親に通知
       this.setState
-        knobpos: this.state.height * value / this.state.maxvalue
         value: value
 
   render: ->
+    if this.props.value
+      value = this.props.value
+      this.state.value = value
+    else
+      value = this.state.value
+    knobpos = this.state.height * value / this.state.maxvalue
     sliderstyle =
       backgroundColor: "#ff0"
       position: 'absolute'
-      top: 300 - this.state.knobpos # ノブ位置が300のとき
+      top: 300 - knobpos # ノブ位置が300のとき
       left: this.state.left
       width: 20
       height: this.props.height
@@ -85,11 +91,11 @@ Slider = React.createClass
       width: 80
       height:20
       left: -30
-      top: this.state.knobpos                                                 # スライダ移動
+      top: knobpos                                                 # スライダ移動
       backgroundColor: "#ccf8"
 
     <div style={sliderstyle} onMouseDown={this.onMouseDown}>
       <div style={knob}>
-        {this.state.value}
+        {value}
       </div>
     </div>

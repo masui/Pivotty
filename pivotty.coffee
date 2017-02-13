@@ -24,21 +24,34 @@ MovieInfo = React.createClass
 PivottyApp = React.createClass
   getInitialState: ->
     id: 0
+    titleValue: 10000
+    rankValue: 10000
+
+  findValue: (array, id) -> # あるidのデータが何番目かを馬鹿サーチする... 逆インデクスを最初に作るべきかも
+    for i in [0...array.length]
+      if array[i] == id
+        return i
  
   changeRank: (rank) ->
     id = movieData['indices']['imdbVotes'][rank]
+    titleValue = this.findValue movieData['indices']['Title'], id
     this.setState
       id: id
+      titleValue: titleValue
+      rankValue: null
 
   changeTitle: (title) ->
     id = movieData['indices']['Title'][title]
+    rankValue = this.findValue movieData['indices']['imdbVotes'], id
     this.setState
       id: id
+      rankValue: rankValue
+      titleValue: null
 
   render: ->
     <div>
-      <Slider top=70 left=280 height=400 maxvalue=30106 onChange={this.changeTitle} />
-      <Slider top=70 left=380 height=400 maxvalue=30106 onChange={this.changeRank} />
+      <Slider top=70 left=280 height=400 maxvalue=30106 onChange={this.changeTitle} value={this.state.titleValue} />
+      <Slider top=70 left=380 height=400 maxvalue=30106 onChange={this.changeRank} value={this.state.rankValue} />
 
       <MovieInfo top=0 left=0 id={this.state.id} />
     </div>
@@ -57,4 +70,3 @@ $ ->
     success:   data_received
     error:     (xhr,  status, error) -> alert status
     # complete:  data_received
-    
