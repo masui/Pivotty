@@ -2,7 +2,9 @@ movieData = {}
 
 MovieInfo = React.createClass
   render: ->
-    url = movieData['data'][this.props.id]['image_url']
+    # url = movieData['data'][this.props.id]['image_url']
+    # url = "images/#{this.props.id+1}.jpg"
+    url = "images/#{movieData['data'][this.props.id]['id']}.jpg"
     title = movieData['data'][this.props.id]['Title']
     director = movieData['data'][this.props.id]['Director']
     actor = movieData['data'][this.props.id]['Actors']
@@ -38,7 +40,12 @@ MovieInfo = React.createClass
 
 MovieImage = React.createClass
   render: ->
-    url = movieData['data'][this.props.id]['image_url']
+    # url = movieData['data'][this.props.id]['image_url']
+    # url = "images/#{this.props.id+1}.jpg"
+    url = "images/#{movieData['data'][this.props.id]['id']}.jpg"
+    err = =>
+      ReactDOM.findDOMNode(this.refs.image).src = "images/empty.png"
+#      alert this.refs.image.src = "images/2571.jpg"
     imagestyle =
       position: 'absolute'
       top: this.props.top
@@ -46,10 +53,10 @@ MovieImage = React.createClass
       width: 80
     if url != "N/A"
       <div>
-        <img style={imagestyle} src={url} />
+        <img style={imagestyle} src={url} ref="image" onError={err} />
       </div>
     else
-      <div style={imagestyle}></div>
+      <img style={imagestyle} src="images/2571.jpg" />
 
 #MovieColumn = React.createClass
 #  getInitialState: ->
@@ -179,9 +186,9 @@ PivottyApp = React.createClass
         this.setState
           column: column
       when 38 # up
-        updown = -1
-      when 40 # down
         updown = 1
+      when 40 # down
+        updown = -1
 
     if updown != 0
       switch column
