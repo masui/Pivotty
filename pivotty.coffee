@@ -8,6 +8,8 @@ MovieInfo = React.createClass
     title = movieData['data'][this.props.id]['Title']
     director = movieData['data'][this.props.id]['Director']
     actor = movieData['data'][this.props.id]['Actors']
+    replaceImage = =>
+      ReactDOM.findDOMNode(this.refs.image).src = "images/empty.png"
 
     imagestyle =
       position: 'absolute'
@@ -35,7 +37,7 @@ MovieInfo = React.createClass
       <div style={titlestyle} >{title}</div>
       <div style={directorstyle} >{director}</div>
       <div style={actorstyle} >{actor}</div>
-      <img style={imagestyle} src={url} />
+      <img style={imagestyle} ref="image" src={url} onError={replaceImage} />
     </div>
 
 MovieImage = React.createClass
@@ -43,7 +45,7 @@ MovieImage = React.createClass
     # url = movieData['data'][this.props.id]['image_url']
     # url = "images/#{this.props.id+1}.jpg"
     url = "images/#{movieData['data'][this.props.id]['id']}.jpg"
-    err = =>
+    replaceImage = =>
       ReactDOM.findDOMNode(this.refs.image).src = "images/empty.png"
 #      alert this.refs.image.src = "images/2571.jpg"
     imagestyle =
@@ -53,7 +55,7 @@ MovieImage = React.createClass
       width: 80
     if url != "N/A"
       <div>
-        <img style={imagestyle} src={url} ref="image" onError={err} />
+        <img style={imagestyle} src={url} ref="image" onError={replaceImage} />
       </div>
     else
       <img style={imagestyle} src="images/2571.jpg" />
@@ -300,6 +302,11 @@ PivottyApp = React.createClass
       <Slider top=70 left=640 height=400 maxvalue=30106 onChange={this.changeActor} value={this.state.actorValue} />
       <MovieImage top=330 left=665 id={id43} />
       <MovieImage top=450 left=665 id={id44} />
+        
+      <span style={position:'absolute', top:25, left:315}>タイトル</span>
+      <span style={position:'absolute', top:25, left:435}>ランキング</span>
+      <span style={position:'absolute', top:25, left:555}>監督</span>
+      <span style={position:'absolute', top:25, left:675}>出演</span>
         
       <MovieInfo top=0 left=0 id={id} />
     </div>
