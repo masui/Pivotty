@@ -1,13 +1,68 @@
-movieData = {}
+# coding: utf-8
 
+movieData = {}
+oldcolumn = -1
+sayTimeout = null
+
+findValue = (array, id) ->
+  for i in [0...array.length]
+    if array[i] == id
+      return i
+
+VoiceInfo = React.createClass
+  render: ->
+    title = movieData['data'][this.props.id]['Title']
+    director = movieData['data'][this.props.id]['Director']
+    actor = movieData['data'][this.props.id]['Actors']
+    plot = movieData['data'][this.props.id]['Plot']
+    
+    rankValue = findValue movieData['indices']['imdbVotes'], this.props.id
+    
+    actors = actor.split ','
+    text = ""
+    column = this.props.column
+    if column != oldcolumn
+      switch this.props.column
+        when 0
+          text = "Title: "
+        when 1
+          text = "Rank: "
+        when 2
+          text = "Director: "
+        when 3
+          text = "Actor: "
+    oldcolumn = column
+
+    switch this.props.column
+      when 0
+        text += title
+      when 1
+        text += "#{title}: #{rankValue}"
+      when 2
+        text += "#{director}: #{title}"
+      when 3
+        text += "#{actors[0]}: #{title}"
+
+    f =  ->
+      $.ajax
+        async:     true
+        type:      "GET"
+        url:       "say.cgi"
+        data:
+          text: encodeURIComponent text
+          level: 100
+        context:    this
+    sayTimeout = setTimeout f, 300
+
+    <div></div>
+    
 MovieInfo = React.createClass
   render: ->
-    # url = movieData['data'][this.props.id]['image_url']
-    # url = "images/#{this.props.id+1}.jpg"
     url = "images/#{movieData['data'][this.props.id]['id']}.jpg"
     title = movieData['data'][this.props.id]['Title']
     director = movieData['data'][this.props.id]['Director']
     actor = movieData['data'][this.props.id]['Actors']
+    plot = movieData['data'][this.props.id]['Plot']
     replaceImage = =>
       ReactDOM.findDOMNode(this.refs.image).src = "images/empty.png"
 
@@ -21,23 +76,30 @@ MovieInfo = React.createClass
       top: this.props.top + 10
       left: this.props.left + 20
       width: 250
+      fontWeight: 'bold'
       fontSize: 20
     directorstyle =
       position: 'absolute'
       top: this.props.top + 80
       left: this.props.left + 20
-      width: 200
+      width: 250
     actorstyle =
       position: 'absolute'
       top: this.props.top + 110
       left: this.props.left + 20
-      width: 200
+      width: 250
+    plotstyle =
+      position: 'absolute'
+      top: this.props.top + 500
+      left: this.props.left + 20
+      width: 250
 
     <div>
-      <div style={titlestyle} >{title}</div>
-      <div style={directorstyle} >{director}</div>
-      <div style={actorstyle} >{actor}</div>
+      <div style={titlestyle}>{title}</div>
+      <div style={directorstyle}>監督: {director}</div>
+      <div style={actorstyle}>出演: {actor}</div>
       <img style={imagestyle} ref="image" src={url} onError={replaceImage} />
+      <div style={plotstyle}>あらすじ: {plot}</div>
     </div>
 
 MovieImage = React.createClass
@@ -47,7 +109,6 @@ MovieImage = React.createClass
     url = "images/#{movieData['data'][this.props.id]['id']}.jpg"
     replaceImage = =>
       ReactDOM.findDOMNode(this.refs.image).src = "images/empty.png"
-#      alert this.refs.image.src = "images/2571.jpg"
     imagestyle =
       position: 'absolute'
       top: this.props.top
@@ -60,54 +121,17 @@ MovieImage = React.createClass
     else
       <img style={imagestyle} src="images/2571.jpg" />
 
-#MovieColumn = React.createClass
-#  getInitialState: ->
-#    state = 
-#      top: this.props.top
-#      left: this.props.left
-#      id: this.props.id
-#      titleValue: 10000
-#      rankValue: 10000
-#      
-#  findValue: (array, id) -> # あるidのデータが何番目かを馬鹿サーチする... 逆インデクスを最初に作るべきかも
-#    for i in [0...array.length]
-#      if array[i] == id
-#        return i
-# 
-#  changeRank: (rank) ->
-#    id = movieData['indices']['imdbVotes'][rank]
-#    titleValue = this.findValue movieData['indices']['Title'], id
-#    this.setState
-#      id: id
-#      titleValue: titleValue
-#      rankValue: null
-#
-#  render: ->
-#    columnstyle =
-#      backgroundColor: "#ffd"
-#      position: 'absolute'
-#      top: this.state.top
-#      left: this.state.left
-#      width: 130
-#      height: 500
-#      
-#    id = this.props.id
-#    rankValue = this.findValue this.props.array, id
-#    id2 = this.props.array[rankValue-2]
-#    id1 = this.props.array[rankValue-1]
-#
-#    <div style={columnstyle}>
-#      <Slider top=70 left=10 height=400 maxvalue=30106 onChange={this.changeRank} value={this.state.rankValue} />
-#      <MovieImage top=50 left=50 id={id2} />
-#      <MovieImage top=170 left=50 id={id1} />
-#    </div>
-
 PivottyApp = React.createClass
+
+  preventDefault: (e) ->
+    e.preventDefault()
+
   getInitialState: ->
     $(document).on 'keydown', this.keyDown
+    $(document).on 'mousewheel', this.mouseWheel
+    $(document).on 'mousedown', this.mouseDown
+    $(document).on 'contextmenu', this.preventDefault # 右クリックでメニューが出ないようにする
     
-    # rankValue = 10
-    # id = movieData['indices']['imdbVotes'][rankValue]
     id = 2570
     rankValue = this.findValue movieData['indices']['imdbVotes'], id
     titleValue = this.findValue movieData['indices']['Title'], id
@@ -174,8 +198,30 @@ PivottyApp = React.createClass
       directorValue: directorValue
       actorValue: null
 
+  mouseDown: (e) ->
+    e.preventDefault()
+    column = this.state.column
+    switch e.button
+      when 0 # left
+        column = column-1 if column > 0
+        this.setState
+          column: column
+      when 2 # right
+        column = column+1 if column < 3
+        this.setState
+          column: column
+    this.do_updown 0, column
+    return false
+    
+  mouseWheel: (e) ->
+    e.preventDefault()
+    column = this.state.column
+    this.do_updown -1, column if e.deltaY == 1
+    this.do_updown 1, column if e.deltaY == -1
+    
   keyDown: (e) ->
     e.preventDefault()
+    clearTimeout sayTimeout
     column = this.state.column
     updown = 0
     switch e.keyCode
@@ -191,7 +237,9 @@ PivottyApp = React.createClass
         updown = 1
       when 40 # down
         updown = -1
+    this.do_updown updown, column
 
+  do_updown: (updown,column) ->
     if updown != 0
       switch column
         when 0 # Title
@@ -243,12 +291,14 @@ PivottyApp = React.createClass
 
   render: ->
     id = this.state.id
-    
-    titleValue = this.findValue movieData['indices']['Title'], id
-    id11 = movieData['indices']['Title'][titleValue-2]
-    id12 = movieData['indices']['Title'][titleValue-1]
-    id13 = movieData['indices']['Title'][titleValue+1]
-    id14 = movieData['indices']['Title'][titleValue+2]
+
+    a = movieData['indices']['Title']
+    v = this.findValue a, id
+    id11 = a[v-2]
+    id12 = a[v-1]
+    id13 = a[v+1]
+    id14 = a[v+2]
+    titleValue = v
     
     rankValue = this.findValue movieData['indices']['imdbVotes'], id
     id21 = movieData['indices']['imdbVotes'][rankValue-2]
@@ -271,10 +321,10 @@ PivottyApp = React.createClass
     columnstyle =
       backgroundColor: "#ddd"
       position: 'absolute'
-      top: 20
+      top: 0
       left: this.state.column * 120 + 280
       width: 120
-      height: 600
+      height: 640
 
     <div>
       <div style={columnstyle} />
@@ -302,22 +352,20 @@ PivottyApp = React.createClass
       <Slider top=70 left=640 height=400 maxvalue=30106 onChange={this.changeActor} value={this.state.actorValue} />
       <MovieImage top=330 left=665 id={id43} />
       <MovieImage top=450 left=665 id={id44} />
-        
-      <span style={position:'absolute', top:25, left:315}>タイトル</span>
+
+      <div style={position:'absolute', top:25, left:315}>タイトル</div>
       <span style={position:'absolute', top:25, left:435}>ランキング</span>
       <span style={position:'absolute', top:25, left:555}>監督</span>
       <span style={position:'absolute', top:25, left:675}>出演</span>
         
       <MovieInfo top=0 left=0 id={id} />
+
+      <VoiceInfo id={id} column={this.state.column} />
     </div>
-      
-#      <MovieColumn top=100 left=380 height=400 id={id} array={movieData['indices']['imdbVotes']} />
-  
-      
 
 data_received = (d, status, xhr) ->
   movieData = d
-  React.render <PivottyApp />, pivotty
+  ReactDOM.render <PivottyApp />, pivotty
 
 $ ->
   $.ajax
