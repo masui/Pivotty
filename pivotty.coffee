@@ -43,7 +43,7 @@ VoiceInfo = React.createClass
       when 3
         text += "#{actors[0]}: #{title}"
 
-    f =  ->
+    say =  ->
       $.ajax
         async:     true
         type:      "GET"
@@ -52,7 +52,7 @@ VoiceInfo = React.createClass
           text: encodeURIComponent text
           level: 100
         context:    this
-    sayTimeout = setTimeout f, 300
+    sayTimeout = setTimeout say, 300
 
     <div></div>
     

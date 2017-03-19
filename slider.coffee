@@ -1,37 +1,5 @@
 Slider = React.createClass
-  createTable: ->
-    val = 0.0
-    for i in [0..20]
-      this.state.table[i] = Math.floor val
-      val += 0.2
-    for i in [21..40]
-      this.state.table[i] = Math.floor val
-      val += 0.5
-    for i in [41..80]
-      this.state.table[i] = Math.floor val
-      val += 5.0
-    for i in [81..120]
-      this.state.table[i] = Math.floor val
-      val += 50.0
-    for i in [121..160]
-      this.state.table[i] = Math.floor val
-      val += 500.0
-    val = 0.0
-    for i in [0..20]
-      this.state.table[-i] = Math.floor val
-      val -= 0.2
-    for i in [21..40]
-      this.state.table[-i] = Math.floor val
-      val -= 0.5
-    for i in [41..80]
-      this.state.table[-i] = Math.floor val
-      val -= 5.0
-    for i in [81..120]
-      this.state.table[-i] = Math.floor val
-      val -= 50.0
-    for i in [121..160]
-      this.state.table[-i] = Math.floor val
-      val -= 500.0
+  table: {}
 
   getInitialState: ->
     state = 
@@ -42,11 +10,11 @@ Slider = React.createClass
       maxvalue: this.props.maxvalue
       value: this.props.value
       clicked: false
-      table: {}
 
   onMouseDown: (e) ->
     e.preventDefault()
-    this.createTable()
+    this.table = new SmoothSnapTable
+    this.table.reset()
     this.state.mousedowny = e.pageY
     this.state.mousedownx = e.pageX
     this.state.downvalue = this.state.value
@@ -70,7 +38,7 @@ Slider = React.createClass
       #
       # ここで微調整計算
       #
-      value = this.state.downvalue + this.state.table[yoffset]                # 新しい値設定
+      value = this.state.downvalue + this.table.table[yoffset]                # 新しい値設定
       value = 0 if value < 0
       value = this.state.maxvalue if value > this.state.maxvalue
       this.props.value = value
